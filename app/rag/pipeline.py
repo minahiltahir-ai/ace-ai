@@ -3,7 +3,7 @@ from app.rag.retriever import retrieve_documents
 
 def retrieve_context(
     query: str,
-    k: int = 4,
+    k: int = 3,
 ) -> str:
     """Retrieve relevant document context for a query."""
 

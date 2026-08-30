@@ -1,11 +1,8 @@
 import subprocess
 import sys
-from pathlib import Path
 
 
-def main():
-    project_root = Path(__file__).resolve().parent
-
+def main() -> None:
     subprocess.run(
         [
             sys.executable,
@@ -14,7 +11,6 @@ def main():
             "run",
             "app/ui/main.py",
         ],
-        cwd=project_root,
         check=True,
     )
 

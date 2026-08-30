@@ -24,3 +24,9 @@ Thumbs.db
 
 # Local data
 data/local/
+# Local databases
+data/*.db
+data/storage/
+
+# Generated vector store
+data/vectorstore/

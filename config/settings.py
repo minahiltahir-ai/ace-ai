@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     environment: str = "development"
     debug: bool = True
 
-    model_name: str = "gpt-4o-mini"
+    model_name: str = "llama3.2:1b"
 
     langsmith_tracing: bool = False
     langsmith_project: str = "ace-ai"

@@ -6,9 +6,8 @@ from app.rag.vectorstore import get_vectorstore
 def retrieve_documents(
     query: str,
     k: int = 3,
-    score_threshold: float = 0.7,
 ) -> list[Document]:
-    """Retrieve relevant document chunks using similarity scores."""
+    """Retrieve the most relevant document chunks."""
 
     cleaned_query = query.strip()
 
@@ -17,15 +16,33 @@ def retrieve_documents(
 
     vectorstore = get_vectorstore()
 
-    results = vectorstore.similarity_search_with_score(
-        cleaned_query,
-        k=k,
+    results = vectorstore._collection.query(
+        query_texts=[cleaned_query],
+        n_results=k,
+        include=[
+            "documents",
+            "metadatas",
+            "distances",
+        ],
     )
 
     documents = []
 
-    for document, score in results:
-        if score <= score_threshold:
-            documents.append(document)
+    result_documents = results.get("documents", [[]])[0]
+    result_metadatas = results.get("metadatas", [[]])[0]
+
+    for content, metadata in zip(
+        result_documents,
+        result_metadatas,
+    ):
+        if not content or not content.strip():
+            continue
+
+        documents.append(
+            Document(
+                page_content=content,
+                metadata=metadata or {},
+            )
+        )
 
     return documents

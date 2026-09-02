@@ -22,29 +22,10 @@ def build_messages(
 ) -> list[tuple[str, str]]:
     """Build messages sent to the language model."""
 
-    context = retrieve_context(
-        query=message,
-        k=3,
-    )
-
-    rag_instruction = f"""
-DOCUMENT CONTEXT:
-{context if context.strip() else "[NO RELEVANT DOCUMENT CONTEXT FOUND]"}
-
-STRICT DOCUMENT-GROUNDED RULES:
-- Answer the user's question ONLY using the DOCUMENT CONTEXT above.
-- Do NOT use your general knowledge to answer.
-- Do NOT infer, guess, or invent information.
-- If the answer is not explicitly supported by the DOCUMENT CONTEXT, say:
-  "I couldn't find this information in the provided documents."
-- Never treat the user's question itself as evidence.
-- Never assume that an unrelated retrieved passage answers the question.
-"""
-
     messages = [
         (
             "system",
-            ACE_SYSTEM_PROMPT + "\n\n" + rag_instruction,
+            ACE_SYSTEM_PROMPT,
         )
     ]
 
@@ -56,7 +37,6 @@ STRICT DOCUMENT-GROUNDED RULES:
     )
 
     return messages
-
 
 def ask_ace(
     message: str,

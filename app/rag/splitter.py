@@ -5,11 +5,11 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 def split_documents(
     documents: list[Document],
 ) -> list[Document]:
-    """Split any supported document into balanced RAG chunks."""
+    """Split documents into overlapping chunks for RAG."""
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=75,
+        chunk_size=1200,
+        chunk_overlap=250,
         separators=[
             "\n\n",
             "\n",

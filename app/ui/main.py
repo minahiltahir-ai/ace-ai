@@ -297,6 +297,35 @@ if st.session_state.messages:
 
             st.markdown(message["content"])
 
+            # ---------------------------------------------
+            # DISPLAY SAVED SOURCES
+            # ---------------------------------------------
+
+            sources = message.get("sources", [])
+
+            if sources:
+
+                st.markdown(
+                    "### 📚 Sources"
+                )
+
+                for source in sources:
+
+                    source_name = Path(
+                        source["source"]
+                    ).name
+
+                    page = source.get("page")
+
+                    if page:
+                        st.markdown(
+                            f"📄 **{source_name}** — Page {page}"
+                        )
+                    else:
+                        st.markdown(
+                            f"📄 **{source_name}**"
+                        )
+
 
 # =========================================================
 # CHAT INPUT
@@ -381,20 +410,22 @@ if prompt := st.chat_input("Ask ACE anything..."):
 
         st.markdown(cleaned_prompt)
 
-    # -----------------------------------------------------
+        # -----------------------------------------------------
     # GENERATE ACE RESPONSE
     # -----------------------------------------------------
 
     with st.chat_message("assistant"):
 
+        response_stream, sources = chat_stream(
+            message=cleaned_prompt,
+            history=conversation_history,
+        )
+
         response_placeholder = st.empty()
 
         response_parts = []
 
-        for chunk in chat_stream(
-            message=cleaned_prompt,
-            history=conversation_history,
-        ):
+        for chunk in response_stream:
 
             response_parts.append(chunk)
 
@@ -402,7 +433,35 @@ if prompt := st.chat_input("Ask ACE anything..."):
                 "".join(response_parts)
             )
 
-        response = "".join(response_parts)
+        response = "".join(response_parts).strip()
+
+        # -------------------------------------------------
+        # DISPLAY SOURCES
+        # -------------------------------------------------
+
+        if sources:
+
+            st.markdown(
+                "### 📚 Sources"
+            )
+
+            for source in sources:
+
+                source_name = Path(
+                    source["source"]
+                ).name
+
+                page = source.get("page")
+
+                if page:
+                    st.markdown(
+                        f"📄 **{source_name}** — Page {page}"
+                    )
+                else:
+                    st.markdown(
+                        f"📄 **{source_name}**"
+                    )
+
 
     # -----------------------------------------------------
     # SAVE ASSISTANT MESSAGE
@@ -411,6 +470,7 @@ if prompt := st.chat_input("Ask ACE anything..."):
     assistant_message = {
         "role": "assistant",
         "content": response,
+        "sources": sources,
     }
 
     st.session_state.messages.append(

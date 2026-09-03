@@ -1,3 +1,0 @@
-ACE AI is an intelligent AI assistant project.
-ACE AI uses local language models, RAG, memory, agents, workflows, and guardrails.
-The project is designed to answer questions and retrieve information from documents.
